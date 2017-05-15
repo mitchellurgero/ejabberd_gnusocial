@@ -31,7 +31,7 @@ function command(){
 			break;
 		case "auth":
 			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL,"https://p2px.me/api/qvitter/checklogin.json");
+			curl_setopt($ch, CURLOPT_URL,"https://p2px.me/api/qvitter/checklogin.json"); //Change this to match your server
 			curl_setopt($ch, CURLOPT_POST, 2);
 			curl_setopt($ch, CURLOPT_POSTFIELDS,http_build_query(array('password' => $data[3], 'username' => $data[1])));
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
