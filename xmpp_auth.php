@@ -6,12 +6,13 @@ $js_host;
 $data;
 $stout;
 $stin;
-
+$limit = 100;
 play();
 function play(){
 	global $data, $stin, $stout;
 	openstd();
 	do {
+		$limit = $limit - 1;
 		readstdin(); // get data
 		$ret = command(); // play with data !
 		//syslog(LOG_INFO, $data);
@@ -20,6 +21,8 @@ function play(){
 		error_log($ret, 3, "/var/logs/ejabberd/error.log");
 		out($ret); // send what we reply.
 		$data = NULL; // more clean. ...
+		sleep(1);
+		if($limit <= 0){ exit(0); }
 	} while (true);
 }
 function command(){
