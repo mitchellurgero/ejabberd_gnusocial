@@ -1,5 +1,7 @@
 <?php
 error_reporting(0);
+$server = "https://p2px.me"; //Full URI to your instance (No trailing slash)
+$xmpp_server = "p2px.me"; //Purely so we can replace this string in the XMPP's jabberID for processing later in script.
 $ja_user;
 $ja_pass;
 $js_host;
@@ -21,20 +23,39 @@ function play(){
 		error_log($ret, 3, "/var/logs/ejabberd/error.log");
 		out($ret); // send what we reply.
 		$data = NULL; // more clean. ...
-		sleep(1);
+		usleep(500000); //sleep half second
 		if($limit <= 0){ exit(0); }
 	} while (true);
 }
 function command(){
-	global $data, $stin, $stout;
+	global $data, $stin, $stout, $server;
 	$data = splitcomm();
 	switch($data[0]){
 		case "isuser":
-			return @pack("nn",2,true);
+			$uname = $data[1];
+			$uname = str_replace("@$xmpp_server","",$uname);
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_URL,"$server/api/statuses/friends_timeline/$uname.json"); //Change this to match your server
+			curl_setopt($ch, CURLOPT_POST, 2);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_HEADER  , true);
+			//curl_setopt($ch, CURLOPT_NOBODY  , true);
+			$server_output = curl_exec ($ch);
+			$httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			curl_close ($ch);
+			error_log($httpcode."--".$server_output, 3, "/var/logs/ejabberd/error.log");
+			$return = false;
+			if($httpcode == 200){
+				$return = true;
+			} else {
+				$return = false;
+			}
+			$return = ($return) ? 1 : 0;
+			return @pack("nn",2,$return);
 			break;
 		case "auth":
 			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL,"https://p2px.me/api/qvitter/checklogin.json"); //Change this to match your server
+			curl_setopt($ch, CURLOPT_URL,"$server/api/qvitter/checklogin.json"); //Change this to match your server
 			curl_setopt($ch, CURLOPT_POST, 2);
 			curl_setopt($ch, CURLOPT_POSTFIELDS,http_build_query(array('password' => $data[3], 'username' => $data[1])));
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
