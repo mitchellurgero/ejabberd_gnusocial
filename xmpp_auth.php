@@ -28,7 +28,7 @@ function play(){
 	} while (true);
 }
 function command(){
-	global $data, $stin, $stout, $server;
+	global $data, $stin, $stout, $server, $xmpp_server;
 	$data = splitcomm();
 	switch($data[0]){
 		case "isuser":
