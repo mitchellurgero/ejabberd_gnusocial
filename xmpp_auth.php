@@ -35,8 +35,7 @@ function command(){
 			$uname = $data[1];
 			$uname = str_replace("@$xmpp_server","",$uname);
 			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL,"$server/api/statuses/friends_timeline/$uname.json"); //Change this to match your server
-			curl_setopt($ch, CURLOPT_POST, 2);
+			curl_setopt($ch, CURLOPT_URL,"$server/api/statuses/friends_timeline/$uname.json");
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 			curl_setopt($ch, CURLOPT_HEADER  , true);
 			//curl_setopt($ch, CURLOPT_NOBODY  , true);
